@@ -4,6 +4,9 @@ using System.Collections;
 public class EnemyBehaviour : MonoBehaviour {
 
     public float health = 150f;
+    public float projectileSpeed = 10f;
+    public GameObject projectile;
+    public float shotsPerSeconds = 0.5f;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -18,14 +21,20 @@ public class EnemyBehaviour : MonoBehaviour {
             }
         }
     }
-
-    // Use this for initialization
-    void Start () {
-	
-	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+        float probability = Time.deltaTime * shotsPerSeconds;
+        if(Random.value < probability)
+        {
+            Fire();
+        }
 	}
+
+    void Fire()
+    {
+        Vector3 startPosition = transform.position + new Vector3(0f, -1f, 0f);
+        GameObject missile = Instantiate(projectile, startPosition, Quaternion.identity) as GameObject;
+        missile.rigidbody2D.velocity = new Vector2(0f, -projectileSpeed);
+    }
 }
