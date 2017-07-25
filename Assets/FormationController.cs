@@ -8,6 +8,7 @@ public class FormationController : MonoBehaviour
     public float width = 10f;
     public float height = 5f;
     public float speed = 15f;
+    public float spawnDelay = 0.5f;
 
     private bool movingRight = true;
     private float xmax;
@@ -16,7 +17,7 @@ public class FormationController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        SpawnEnemies();
+        SpawnUntilFull();
     }
 
     private void OnDrawGizmos()
@@ -53,8 +54,20 @@ public class FormationController : MonoBehaviour
         if (AllMembersDead())
         {
             Debug.Log("Enemy formation destroyed.");
-            SpawnEnemies();
+            SpawnUntilFull();
         }
+    }
+
+    Transform NextFreePosition()
+    {
+        foreach (Transform childPositionGameObject in transform)
+        {
+            if (childPositionGameObject.childCount == 0)
+            {
+                return childPositionGameObject;
+            }
+        }
+        return null;
     }
 
     bool AllMembersDead()
@@ -83,5 +96,27 @@ public class FormationController : MonoBehaviour
             xmax = rightBoundry.x;
             xmin = leftBoundry.x;
         }
+    }
+
+    void SpawnUntilFull()
+    {
+        Transform freePosition = NextFreePosition();
+        if (freePosition)
+        {
+            GameObject enemy = Instantiate(enemyPrefab, freePosition.position, Quaternion.identity) as GameObject;
+            enemy.transform.parent = freePosition;
+
+            float distanceToCamera = transform.position.z - Camera.main.transform.position.z;
+            Vector3 leftBoundry = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, distanceToCamera));
+            Vector3 rightBoundry = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, distanceToCamera));
+
+            xmax = rightBoundry.x;
+            xmin = leftBoundry.x;
+        }
+        if (NextFreePosition())
+        {
+            Invoke("SpawnUntilFull", spawnDelay);
+        }
+        
     }
 }
