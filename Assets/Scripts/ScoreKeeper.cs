@@ -6,7 +6,7 @@ public class ScoreKeeper : MonoBehaviour {
 
     private Text myText;
 
-    private int score = 0;
+    public static int score = 0;
 
     public void Start()
     {
@@ -20,9 +20,8 @@ public class ScoreKeeper : MonoBehaviour {
         myText.text = score.ToString();
     }
 
-    public void Reset()
+    public static void Reset()
     {
         score = 0;
-        myText.text = score.ToString();
     }
 }

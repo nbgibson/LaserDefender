@@ -73,10 +73,17 @@ public class PlayerController : MonoBehaviour {
             missile.Hit();
             if (health <= 0)
             {
-                Debug.Log("Player destroyed");
-                Destroy(gameObject);
+                Die();
             }
         }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player destroyed");
+        LevelManager man = GameObject.Find("Level Manager").GetComponent<LevelManager>();
+        man.LoadLevel("Win");
+        Destroy(gameObject);
     }
 }
 
